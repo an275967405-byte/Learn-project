@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(56, 239, 125, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(235, 51, 73, 0.4);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        .level {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .level-A { background: #4caf50; color: white; }
+        .level-B { background: #2196f3; color: white; }
+        .level-C { background: #ff9800; color: white; }
+        .level-D { background: #ff5722; color: white; }
+        .level-F { background: #9e9e9e; color: white; }
+
+        #message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-msg {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-msg {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            th, td {
+                padding: 10px 5px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 学生管理系统</h1>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>学生总数</h3>
+                <div class="value" id="totalStudents">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>平均分</h3>
+                <div class="value" id="avgScore">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>最高分</h3>
+                <div class="value" id="maxScore">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>最低分</h3>
+                <div class="value" id="minScore">0</div>
+            </div>
+        </div>
+
+        <!-- 添加学生 -->
+        <div class="card">
+            <h2>➕ 添加学生</h2>
+            <div id="message"></div>
+            <div class="form-group">
+                <label for="addName">姓名</label>
+                <input type="text" id="addName" placeholder="请输入学生姓名">
+            </div>
+            <div class="form-group">
+                <label for="addScore">成绩</label>
+                <input type="number" id="addScore" placeholder="请输入成绩 (0-100)" min="0" max="100">
+            </div>
+            <button class="btn-primary" onclick="addStudent()">添加学生</button>
+        </div>
+
+        <!-- 查询学生 -->
+        <div class="card">
+            <h2>🔍 查询学生</h2>
+            <div class="form-group">
+                <label for="queryName">学生姓名</label>
+                <input type="text" id="queryName" placeholder="请输入要查询的学生姓名">
+            </div>
+            <div class="btn-group">
+                <button class="btn-info" onclick="queryStudent()">查询信息</button>
+                <button class="btn-info" onclick="queryLevel()">查询等级</button>
+            </div>
+            <div id="queryResult" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- 更新学生 -->
+        <div class="card">
+            <h2>✏️ 更新成绩</h2>
+            <div class="form-group">
+                <label for="updateName">学生姓名</label>
+                <input type="text" id="updateName" placeholder="请输入学生姓名">
+            </div>
+            <div class="form-group">
+                <label for="updateScore">新成绩</label>
+                <input type="number" id="updateScore" placeholder="请输入新成绩 (0-100)" min="0" max="100">
+            </div>
+            <button class="btn-success" onclick="updateStudent()">更新成绩</button>
+        </div>
+
+        <!-- 删除学生 -->
+        <div class="card">
+            <h2>🗑️ 删除学生</h2>
+            <div class="form-group">
+                <label for="deleteName">学生姓名</label>
+                <input type="text" id="deleteName" placeholder="请输入要删除的学生姓名">
+            </div>
+            <button class="btn-danger" onclick="deleteStudent()">删除学生</button>
+        </div>
+
+        <!-- 学生列表 -->
+        <div class="card">
+            <h2>📋 学生列表</h2>
+            <button class="btn-primary" onclick="loadStudents()" style="margin-bottom: 15px;">刷新列表</button>
+            <div id="studentList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:5001';
+
+        // 显示消息
+        function showMessage(message, isError = false) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = message;
+            msgDiv.className = isError ? 'error-msg' : 'success-msg';
+            msgDiv.style.display = 'block';
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // 加载统计数据
+        async function loadStats() {
+            try {
+                const [avgRes, maxRes, minRes] = await Promise.all([
+                    fetch(`${API_BASE}/student/count/avg`),
+                    fetch(`${API_BASE}/student/count/max`),
+                    fetch(`${API_BASE}/student/count/min`)
+                ]);
+
+                if (avgRes.ok) {
+                    const avgData = await avgRes.json();
+                    document.getElementById('avgScore').textContent = avgData.average?.toFixed(1) || '0';
+                }
+                if (maxRes.ok) {
+                    const maxData = await maxRes.json();
+                    document.getElementById('maxScore').textContent = maxData['max score'] || '0';
+                }
+                if (minRes.ok) {
+                    const minData = await minRes.json();
+                    document.getElementById('minScore').textContent = minData['min score'] || '0';
+                }
+            } catch (error) {
+                console.error('加载统计数据失败:', error);
+            }
+        }
+
+        // 加载学生列表
+        async function loadStudents() {
+            const listDiv = document.getElementById('studentList');
+            listDiv.innerHTML = '<div class="loading">加载中...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/student`);
+                const data = await response.json();
+                
+                if (data.students && data.students.length > 0) {
+                    document.getElementById('totalStudents').textContent = data.students.length;
+                    
+                    let html = '<table><thead><tr><th>ID</th><th>姓名</th><th>成绩</th><th>等级</th><th>注册时间</th></tr></thead><tbody>';
+                    
+                    for (const student of data.students) {
+                        const level = getLevel(student.score);
+                        html += `
+                            <tr>
+                                <td>${student.id}</td>
+                                <td>${student.name}</td>
+                                <td>${student.score}</td>
+                                <td><span class="level level-${level}">${level}</span></td>
+                                <td>${student.reg_time || '-'}</td>
+                            </tr>
+                        `;
+                    }
+                    
+                    html += '</tbody></table>';
+                    listDiv.innerHTML = html;
+                } else {
+                    listDiv.innerHTML = `
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                            </svg>
+                            <p>暂无学生数据</p>
+                        </div>
+                    `;
+                    document.getElementById('totalStudents').textContent = '0';
+                }
+
+                await loadStats();
+            } catch (error) {
+                listDiv.innerHTML = '<div class="error-msg">加载失败，请检查服务器连接</div>';
+                console.error('加载学生列表失败:', error);
+            }
+        }
+
+        // 获取等级
+        function getLevel(score) {
+            if (score >= 90) return 'A';
+            if (score >= 80) return 'B';
+            if (score >= 70) return 'C';
+            if (score >= 60) return 'D';
+            return 'F';
+        }
+
+        // 添加学生
+        async function addStudent() {
+            const name = document.getElementById('addName').value.trim();
+            const score = parseInt(document.getElementById('addScore').value);
+
+            if (!name || isNaN(score)) {
+                showMessage('请填写完整的学生信息', true);
+                return;
+            }
+
+            if (score < 0 || score > 100) {
+                showMessage('成绩必须在0-100之间', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/student`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, score })
+                });
+
+                if (response.ok) {
+                    showMessage('添加成功！');
+                    document.getElementById('addName').value = '';
+                    document.getElementById('addScore').value = '';
+                    await loadStudents();
+                } else {
+                    const error = await response.json();
+                    showMessage(error.error || '添加失败', true);
+                }
+            } catch (error) {
+                showMessage('添加失败，请检查服务器连接', true);
+                console.error('添加学生失败:', error);
+            }
+        }
+
+        // 查询学生
+        async function queryStudent() {
+            const name = document.getElementById('queryName').value.trim();
+            const resultDiv = document.getElementById('queryResult');
+
+            if (!name) {
+                resultDiv.innerHTML = '<div class="error-msg">请输入学生姓名</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/student/query/${encodeURIComponent(name)}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const student = data.student;
+                    const level = getLevel(student.score);
+                    resultDiv.innerHTML = `
+                        <div class="success-msg">
+                            <strong>查询结果：</strong><br>
+                            ID: ${student.id}<br>
+                            姓名: ${student.name}<br>
+                            成绩: ${student.score}<br>
+                            等级: <span class="level level-${level}">${level}</span><br>
+                            注册时间: ${student.reg_time || '-'}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<div class="error-msg">未找到该学生</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error-msg">查询失败</div>';
+                console.error('查询学生失败:', error);
+            }
+        }
+
+        // 查询等级
+        async function queryLevel() {
+            const name = document.getElementById('queryName').value.trim();
+            const resultDiv = document.getElementById('queryResult');
+
+            if (!name) {
+                resultDiv.innerHTML = '<div class="error-msg">请输入学生姓名</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/student/level/${encodeURIComponent(name)}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const level = data.level;
+                    resultDiv.innerHTML = `
+                        <div class="success-msg">
+                            <strong>${name}</strong> 的等级是: <span class="level level-${level}">${level}</span>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<div class="error-msg">未找到该学生</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error-msg">查询失败</div>';
+                console.error('查询等级失败:', error);
+            }
+        }
+
+        // 更新学生
+        async function updateStudent() {
+            const name = document.getElementById('updateName').value.trim();
+            const score = parseInt(document.getElementById('updateScore').value);
+
+            if (!name || isNaN(score)) {
+                alert('请填写完整的信息');
+                return;
+            }
+
+            if (score < 0 || score > 100) {
+                alert('成绩必须在0-100之间');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/student`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, score })
+                });
+
+                if (response.ok) {
+                    alert('更新成功！');
+                    document.getElementById('updateName').value = '';
+                    document.getElementById('updateScore').value = '';
+                    await loadStudents();
+                } else {
+                    const error = await response.json();
+                    alert(error.error || '更新失败');
+                }
+            } catch (error) {
+                alert('更新失败，请检查服务器连接');
+                console.error('更新学生失败:', error);
+            }
+        }
+
+        // 删除学生
+        async function deleteStudent() {
+            const name = document.getElementById('deleteName').value.trim();
+
+            if (!name) {
+                alert('请输入学生姓名');
+                return;
+            }
+
+            if (!confirm(`确定要删除学生 ${name} 吗？此操作不可恢复！`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/student`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+
+                if (response.ok) {
+                    alert('删除成功！');
+                    document.getElementById('deleteName').value = '';
+                    await loadStudents();
+                } else {
+                    const error = await response.json();
+                    alert(error.error || '删除失败');
+                }
+            } catch (error) {
+                alert('删除失败，请检查服务器连接');
+                console.error('删除学生失败:', error);
+            }
+        }
+
+        // 页面加载时自动加载学生列表
+        window.onload = function() {
+            loadStudents();
+        };
+
+        // 支持回车键提交
+        document.getElementById('addName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('addScore').focus();
+        });
+        document.getElementById('addScore').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addStudent();
+        });
+        document.getElementById('queryName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') queryStudent();
+        });
+        document.getElementById('updateName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('updateScore').focus();
+        });
+        document.getElementById('updateScore').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') updateStudent();
+        });
+        document.getElementById('deleteName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') deleteStudent();
+        });
+    </script>
+</body>
+</html>
+
