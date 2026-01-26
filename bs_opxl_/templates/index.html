@@ -154,6 +154,50 @@
             font-size: 0.8rem;
             font-weight: bold;
         }
+        
+        /* 最高球员卡片样式 */
+        .player-info {
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .player-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            min-height: 2.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        /* 动画效果 */
+        @keyframes highlight {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .highlight {
+            animation: highlight 0.5s ease;
+        }
+        
+        /* 最高数据卡片悬停效果 */
+        .card.bg-light:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* 刷新按钮样式 */
+        .btn-light {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-light:hover {
+            background-color: white;
+            border-color: rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -232,6 +276,121 @@
                         
                         <!-- 消息提示 -->
                         <div id="messageArea"></div>
+                        
+                        <!-- 当天最高数据展示 -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-danger text-white">
+                                        <i class="fas fa-trophy me-2"></i>今日数据之王
+                                        <button id="refreshTopBtn" class="btn btn-sm btn-light float-end">
+                                            <i class="fas fa-sync-alt me-1"></i>刷新
+                                        </button>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row text-center" id="topPlayersSection">
+                                            <div class="col-md-4">
+                                                <div class="card bg-light">
+                                                    <div class="card-body">
+                                                        <i class="fas fa-basketball-ball fa-3x text-danger mb-3"></i>
+                                                        <h5>得分王</h5>
+                                                        <div class="player-info">
+                                                            <h3 id="topScorerName" class="text-danger">--</h3>
+                                                            <p class="mb-0">
+                                                                <span class="badge bg-danger fs-5" id="topScorerScore">0</span> 分
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <div class="card bg-light">
+                                                    <div class="card-body">
+                                                        <i class="fas fa-chart-bar fa-3x text-primary mb-3"></i>
+                                                        <h5>篮板王</h5>
+                                                        <div class="player-info">
+                                                            <h3 id="topRebounderName" class="text-primary">--</h3>
+                                                            <p class="mb-0">
+                                                                <span class="badge bg-primary fs-5" id="topRebounderRebounds">0</span> 个
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <div class="card bg-light">
+                                                    <div class="card-body">
+                                                        <i class="fas fa-hands-helping fa-3x text-success mb-3"></i>
+                                                        <h5>助攻王</h5>
+                                                        <div class="player-info">
+                                                            <h3 id="topAssisterName" class="text-success">--</h3>
+                                                            <p class="mb-0">
+                                                                <span class="badge bg-success fs-5" id="topAssisterAssists">0</span> 次
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <small class="text-muted" id="topPlayersDate">数据日期: --</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 定时任务状态面板 -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-secondary text-white">
+                                        <i class="fas fa-clock me-2"></i>定时爬取服务状态
+                                        <div class="float-end">
+                                            <button id="triggerCrawlBtn" class="btn btn-sm btn-warning me-2">
+                                                <i class="fas fa-play me-1"></i>立即爬取
+                                            </button>
+                                            <button id="refreshSchedulerBtn" class="btn btn-sm btn-light">
+                                                <i class="fas fa-sync-alt me-1"></i>刷新状态
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h5>服务状态</h5>
+                                                <div class="mb-3">
+                                                    <span class="badge bg-success" id="schedulerStatus">运行中</span>
+                                                    <span class="ms-2" id="lastCrawlTime">最后爬取: --</span>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <h6>定时任务</h6>
+                                                    <ul class="list-group" id="schedulerJobs">
+                                                        <li class="list-group-item">加载中...</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h5>控制面板</h5>
+                                                <div class="btn-group-vertical w-100" role="group">
+                                                    <button class="btn btn-outline-success mb-2" id="startSchedulerBtn">
+                                                        <i class="fas fa-play-circle me-2"></i>启动定时服务
+                                                    </button>
+                                                    <button class="btn btn-outline-danger mb-2" id="stopSchedulerBtn">
+                                                        <i class="fas fa-stop-circle me-2"></i>停止定时服务
+                                                    </button>
+                                                    <button class="btn btn-outline-info" id="viewLogsBtn">
+                                                        <i class="fas fa-file-alt me-2"></i>查看日志
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
                         <!-- 数据展示区域 -->
                         <div class="card">
@@ -315,6 +474,7 @@
         const extractBtn = document.getElementById('extractBtn');
         const showBtn = document.getElementById('showBtn');
         const exportBtn = document.getElementById('exportBtn');
+        const refreshTopBtn = document.getElementById('refreshTopBtn');
         const loadingSpinner = document.getElementById('loadingSpinner');
         const loadingText = document.getElementById('loadingText');
         const messageArea = document.getElementById('messageArea');
@@ -326,11 +486,35 @@
         const backendStatus = document.getElementById('backendStatus');
         const lastUpdate = document.getElementById('lastUpdate');
         
+        // 最高球员数据元素
+        const topScorerName = document.getElementById('topScorerName');
+        const topScorerScore = document.getElementById('topScorerScore');
+        const topRebounderName = document.getElementById('topRebounderName');
+        const topRebounderRebounds = document.getElementById('topRebounderRebounds');
+        const topAssisterName = document.getElementById('topAssisterName');
+        const topAssisterAssists = document.getElementById('topAssisterAssists');
+        const topPlayersDate = document.getElementById('topPlayersDate');
+        
+        // 定时任务管理元素
+        const triggerCrawlBtn = document.getElementById('triggerCrawlBtn');
+        const refreshSchedulerBtn = document.getElementById('refreshSchedulerBtn');
+        const startSchedulerBtn = document.getElementById('startSchedulerBtn');
+        const stopSchedulerBtn = document.getElementById('stopSchedulerBtn');
+        const viewLogsBtn = document.getElementById('viewLogsBtn');
+        const schedulerStatus = document.getElementById('schedulerStatus');
+        const lastCrawlTime = document.getElementById('lastCrawlTime');
+        const schedulerJobs = document.getElementById('schedulerJobs');
+        
         // API端点
         const API_BASE = window.location.origin;
         const EXTRACT_API = `${API_BASE}/extract_data`;
         const SHOW_API = `${API_BASE}/show_data`;
-        const EXPORT_API = `${API_BASE}/download_excel`;
+        const EXPORT_API = `${API_BASE}/static/NBA.xlsx`;  // 直接使用静态文件路径
+        const TOP_PLAYERS_API = `${API_BASE}/top_players`;
+        const SCHEDULER_STATUS_API = `${API_BASE}/scheduler/status`;
+        const SCHEDULER_TRIGGER_API = `${API_BASE}/scheduler/trigger`;
+        const SCHEDULER_START_API = `${API_BASE}/scheduler/start`;
+        const SCHEDULER_STOP_API = `${API_BASE}/scheduler/stop`;
         
         // 状态管理
         let isProcessing = false;
@@ -345,6 +529,23 @@
             extractBtn.addEventListener('click', extractData);
             showBtn.addEventListener('click', showData);
             exportBtn.addEventListener('click', exportData);
+            refreshTopBtn.addEventListener('click', loadTopPlayers);
+            
+            // 添加定时任务按钮事件监听
+            if (triggerCrawlBtn) triggerCrawlBtn.addEventListener('click', triggerCrawlManually);
+            if (refreshSchedulerBtn) refreshSchedulerBtn.addEventListener('click', loadSchedulerStatus);
+            if (startSchedulerBtn) startSchedulerBtn.addEventListener('click', startScheduler);
+            if (stopSchedulerBtn) stopSchedulerBtn.addEventListener('click', stopScheduler);
+            if (viewLogsBtn) viewLogsBtn.addEventListener('click', viewLogs);
+            
+            // 加载最高球员数据
+            loadTopPlayers();
+            
+            // 加载定时任务状态
+            loadSchedulerStatus();
+            
+            // 设置定时刷新定时任务状态（每30秒）
+            setInterval(loadSchedulerStatus, 30000);
         });
         
         // 检查后端状态
@@ -451,9 +652,10 @@
                     lastUpdateTime = new Date();
                     updateLastUpdateTime();
                     
-                    // 爬取成功后自动显示数据
+                    // 爬取成功后自动显示数据和最高球员数据
                     setTimeout(() => {
                         showData();
+                        loadTopPlayers();
                     }, 1000);
                 } else {
                     showMessage('error', `数据爬取失败: ${data.error || '未知错误'}`);
@@ -613,6 +815,247 @@
         // 查看球员详情
         function viewPlayerDetails(name, dataType, value) {
             alert(`球员详情:\n\n姓名: ${name}\n数据类型: ${dataType}\n数值: ${value}`);
+        }
+        
+        // 加载最高球员数据
+        async function loadTopPlayers() {
+            try {
+                const response = await fetch(TOP_PLAYERS_API);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // 更新得分王
+                    topScorerName.textContent = data.top_scorer?.name || '暂无数据';
+                    topScorerScore.textContent = data.top_scorer?.score || '0';
+                    
+                    // 更新篮板王
+                    topRebounderName.textContent = data.top_rebounder?.name || '暂无数据';
+                    topRebounderRebounds.textContent = data.top_rebounder?.rebounds || '0';
+                    
+                    // 更新助攻王
+                    topAssisterName.textContent = data.top_assister?.name || '暂无数据';
+                    topAssisterAssists.textContent = data.top_assister?.assists || '0';
+                    
+                    // 更新日期
+                    topPlayersDate.textContent = `数据日期: ${data.date || '--'}`;
+                    
+                    // 添加动画效果
+                    animateTopPlayers();
+                } else {
+                    showMessage('error', `加载最高球员数据失败: ${data.error || '未知错误'}`);
+                }
+            } catch (error) {
+                console.error('加载最高球员数据时出错:', error);
+                showMessage('error', `请求失败: ${error.message}`);
+            }
+        }
+        
+        // 添加动画效果
+        function animateTopPlayers() {
+            const elements = [
+                topScorerName, topScorerScore,
+                topRebounderName, topRebounderRebounds,
+                topAssisterName, topAssisterAssists
+            ];
+            
+            elements.forEach(element => {
+                if (element) {
+                    element.style.transform = 'scale(1.1)';
+                    element.style.transition = 'transform 0.3s ease';
+                    
+                    setTimeout(() => {
+                        element.style.transform = 'scale(1)';
+                    }, 300);
+                }
+            });
+        }
+        
+        // 定时任务相关功能
+        
+        // 加载定时任务状态
+        async function loadSchedulerStatus() {
+            try {
+                const response = await fetch(SCHEDULER_STATUS_API);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // 更新状态标签 - 处理布尔值或字符串
+                    if (schedulerStatus) {
+                        const isRunning = data.scheduler_running === true || data.status === 'running';
+                        if (isRunning) {
+                            schedulerStatus.className = 'badge bg-success';
+                            schedulerStatus.textContent = '运行中';
+                        } else {
+                            schedulerStatus.className = 'badge bg-danger';
+                            schedulerStatus.textContent = '已停止';
+                        }
+                    }
+                    
+                    // 更新最后爬取时间 - 支持多个可能的字段名
+                    if (lastCrawlTime) {
+                        const crawlTime = data.last_crawl_time || data.timestamp;
+                        if (crawlTime) {
+                            try {
+                                const timeStr = new Date(crawlTime).toLocaleString('zh-CN');
+                                lastCrawlTime.textContent = `最后爬取: ${timeStr}`;
+                            } catch (e) {
+                                lastCrawlTime.textContent = `最后爬取: ${crawlTime}`;
+                            }
+                        } else {
+                            lastCrawlTime.textContent = '最后爬取: 从未爬取';
+                        }
+                    }
+                    
+                    // 更新任务列表
+                    if (schedulerJobs) {
+                        schedulerJobs.innerHTML = '';
+                        
+                        if (data.jobs && data.jobs.length > 0) {
+                            data.jobs.forEach(job => {
+                                const li = document.createElement('li');
+                                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                                
+                                // 格式化下次运行时间
+                                let nextRunTime = '未安排';
+                                if (job.next_run_time) {
+                                    try {
+                                        nextRunTime = new Date(job.next_run_time).toLocaleString('zh-CN');
+                                    } catch (e) {
+                                        nextRunTime = job.next_run_time;
+                                    }
+                                }
+                                
+                                const jobInfo = document.createElement('div');
+                                jobInfo.innerHTML = `
+                                    <strong>${job.name || job.id}</strong><br>
+                                    <small class="text-muted">${nextRunTime}</small>
+                                `;
+                                
+                                const statusBadge = document.createElement('span');
+                                // 使用job.running字段，如果不存在则默认为false
+                                const isJobRunning = job.running === true;
+                                statusBadge.className = isJobRunning ? 'badge bg-warning' : 'badge bg-info';
+                                statusBadge.textContent = isJobRunning ? '执行中' : '等待中';
+                                
+                                li.appendChild(jobInfo);
+                                li.appendChild(statusBadge);
+                                schedulerJobs.appendChild(li);
+                            });
+                        } else {
+                            const li = document.createElement('li');
+                            li.className = 'list-group-item text-muted text-center';
+                            li.textContent = '暂无定时任务';
+                            schedulerJobs.appendChild(li);
+                        }
+                    }
+                    
+                    // 更新按钮状态
+                    if (startSchedulerBtn && stopSchedulerBtn) {
+                        const isRunning = data.scheduler_running === true || data.status === 'running';
+                        startSchedulerBtn.disabled = isRunning;
+                        stopSchedulerBtn.disabled = !isRunning;
+                    }
+                } else {
+                    console.error('获取定时任务状态失败:', data.error);
+                    showMessage('error', `获取定时任务状态失败: ${data.error || '未知错误'}`);
+                }
+            } catch (error) {
+                console.error('加载定时任务状态时出错:', error);
+                if (schedulerStatus) {
+                    schedulerStatus.className = 'badge bg-warning';
+                    schedulerStatus.textContent = '连接失败';
+                }
+                showMessage('error', `加载定时任务状态失败: ${error.message}`);
+            }
+        }
+        
+        // 手动触发爬取
+        async function triggerCrawlManually() {
+            if (isProcessing) return;
+            
+            setLoading(true, '正在手动爬取数据...');
+            
+            try {
+                const response = await fetch(SCHEDULER_TRIGGER_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('success', '手动爬取已触发！正在执行数据爬取...');
+                    
+                    // 等待几秒后刷新状态和数据
+                    setTimeout(() => {
+                        loadSchedulerStatus();
+                        showData();
+                        loadTopPlayers();
+                    }, 3000);
+                } else {
+                    showMessage('error', `手动爬取失败: ${data.error || '未知错误'}`);
+                }
+            } catch (error) {
+                console.error('手动触发爬取时出错:', error);
+                showMessage('error', `请求失败: ${error.message}`);
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        // 启动定时服务
+        async function startScheduler() {
+            try {
+                const response = await fetch(SCHEDULER_START_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('success', '定时服务已启动！系统将在每天上午9点自动爬取数据。');
+                    loadSchedulerStatus();
+                } else {
+                    showMessage('error', `启动定时服务失败: ${data.error || '未知错误'}`);
+                }
+            } catch (error) {
+                console.error('启动定时服务时出错:', error);
+                showMessage('error', `请求失败: ${error.message}`);
+            }
+        }
+        
+        // 停止定时服务
+        async function stopScheduler() {
+            try {
+                const response = await fetch(SCHEDULER_STOP_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('warning', '定时服务已停止！系统将不再自动爬取数据。');
+                    loadSchedulerStatus();
+                } else {
+                    showMessage('error', `停止定时服务失败: ${data.error || '未知错误'}`);
+                }
+            } catch (error) {
+                console.error('停止定时服务时出错:', error);
+                showMessage('error', `请求失败: ${error.message}`);
+            }
+        }
+        
+        // 查看日志
+        function viewLogs() {
+            alert('日志查看功能正在开发中...\n\n当前日志文件位置:\n- Flask日志: bs_opxl_/flask_server.log\n- 爬取日志: bs_opxl_/scheduler_dir/crawl.log');
         }
         
         // 检查后端连接
