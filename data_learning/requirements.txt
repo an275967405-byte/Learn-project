@@ -1,0 +1,5 @@
+modelscope>=1.34.0
+datasets<3.0.0
+oss2
+addict
+pandas
