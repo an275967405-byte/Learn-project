@@ -1,0 +1,16 @@
+ca_web/app.py
+ca_web/routes/student_routes.py
+learn_beautifulsoup.py
+learn_selenium.py
+
+.DS_Store
+ca_web/
+
+/bs_opxl_/date_dir/.DS_Store
+/bs_opxl_/date_dir/__pycache__/
+/bs_opxl_/excel_dir/__pycache__/
+/bs_opxl_/excel_dir/.DS_Store
+/bs_opxl_/flask_/__pycache__/
+/bs_opxl_/bs_data/__pycache__/
+/bs_opxl_/scheduler_dir/.DS_Store
+/__pycache__/
