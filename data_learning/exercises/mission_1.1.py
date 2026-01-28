@@ -9,7 +9,6 @@ ds = load_dataset('DAMO_NLP/jd')
 
 df = DataFrame(list(ds))
 
-
 print(f'数据形状{df.shape}')
 print(f'列名{df.columns}')
 print(f'数据类型{df.dtypes}')  
